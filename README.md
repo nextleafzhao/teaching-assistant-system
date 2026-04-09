@@ -1,7 +1,164 @@
-# Tauri + Vue + TypeScript
+# 教学助手系统
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+> 面向个体补课教师的本地教学管理应用
 
-## Recommended IDE Setup
+## 项目简介
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+本产品旨在为个体补课教师或小型补习班负责人提供一套完整的教学管理工具，解决日常教学管理中的核心痛点：排课、成绩跟踪、教学进度管理、学情分析等。
+
+### 核心目标
+
+- **效率提升**：数字化、自动化工具，解放重复性教学事务
+- **过程追溯**：完整记录教学、资料发放、考试评估全过程
+- **数据驱动**：结构化沉淀教学数据，可视化展示学情
+- **个性辅助**：学生特质标签、知识点体系与进度预警机制
+
+## 技术栈
+
+| 层级 | 技术选型 |
+|------|----------|
+| 桌面外壳 | **Tauri 2** |
+| 前端框架 | **Vue 3 + Vite + TypeScript** |
+| UI 组件库 | **Naive UI** |
+| 状态管理 | **Pinia** |
+| 图表库 | **ECharts + vue-echarts** |
+| 后端服务 | **Rust (Tauri 内置)** ⏳ |
+| 数据库 | **SQLite + SQLx** ⏳ |
+| 打包分发 | **Tauri 构建 `.msi` / `.exe`** |
+
+## 项目结构
+
+```
+rust-implementation/
+├── src/                          # 前端源代码
+│   ├── api/                      # API 层 (Mock 实现，后期替换为 Tauri invoke)
+│   │   └── mockApi.ts            # Mock 数据 + 接口契约定义
+│   ├── components/               # 可复用组件
+│   │   └── MainLayout.vue        # 三栏式全局布局 (左导航 + 中内容 + 右抽屉)
+│   ├── router/                   # 路由配置
+│   │   └── index.ts              # 8 个页面路由
+│   ├── stores/                   # Pinia 状态管理
+│   │   ├── studentStore.ts       # 学生管理 Store
+│   │   ├── courseStore.ts        # 课程管理 Store
+│   │   └── memoTodoStore.ts      # 备忘录/待办 Store
+│   ├── types/                    # TypeScript 类型定义
+│   │   └── index.ts              # 完整接口契约 (Student, Course, Exam 等)
+│   ├── views/                    # 页面组件
+│   │   ├── Dashboard.vue         # 工作台首页 (待办 + 备忘录)
+│   │   ├── Students.vue          # 学生管理 (列表 + 筛选 + 详情看板)
+│   │   ├── Schedule.vue          # 排课日历 (周视图 + 拖拽创建)
+│   │   ├── Plans.vue             # 教学计划 (模板管理 + 进度打卡)
+│   │   ├── Resources.vue         # 教学资源库 (目录树 + 文件列表)
+│   │   ├── Grades.vue            # 成绩管理 (网格录入 + 滑动条联动)
+│   │   ├── Analytics.vue         # 学情分析 (雷达图 + 热力图)
+│   │   └── Settings.vue          # 系统设置 (数据备份 + 配置)
+│   ├── App.vue                   # 根组件 (主题配置)
+│   └── main.ts                   # 入口文件
+├── src-tauri/                    # Tauri/Rust 后端 ⏳
+│   ├── src/                      # Rust 源代码
+│   ├── Cargo.toml                # Rust 依赖配置
+│   └── tauri.conf.json           # Tauri 配置
+├── 教学助手系统需求说明.md        # 需求规格说明
+├── 界面设计文稿.md               # 界面设计规范
+├── 后端设计理念.md               # 后端架构设计理念
+└── README.md                     # 本文件
+```
+
+## 开发指南
+
+### 环境要求
+
+- **Node.js** >= 18
+- **Rust** >= 1.70
+- **Windows 10** (目标平台)
+
+### 安装依赖
+
+```bash
+npm install
+```
+
+### 开发模式
+
+```bash
+# 仅前端热重载
+npm run dev
+
+# Tauri 开发模式 (前端 + Rust)
+npm run tauri dev
+```
+
+### 构建
+
+```bash
+# 构建前端
+npm run build
+
+# 构建 Tauri 应用 (生成 .exe/.msi)
+npm run tauri build
+```
+
+### 类型检查
+
+```bash
+# TypeScript 类型检查
+npx vue-tsc --noEmit
+```
+
+## 功能模块
+
+| 路由 | 页面 | 状态 | 说明 |
+|------|------|------|------|
+| `/` | 工作台首页 | ✅ | 待办事项 + 备忘录 + 系统预置备份提醒 |
+| `/students` | 学生管理 | ✅ | 列表筛选 + 详情看板 (4Tab) + 特质标签编辑 |
+| `/schedule` | 排课日历 | ✅ | 周视图网格 + 课程卡片 + 创建/编辑 |
+| `/plans` | 教学计划 | ✅ | 指派列表 + 模板管理 + 滞后预警高亮 |
+| `/resources` | 教学资源库 | ✅ | 目录树 + 文件列表 + 使用记录 + 悬空记录 |
+| `/grades` | 成绩管理 | ✅ | 考试创建 (知识点配分) + 网格化录入 (滑动条联动) |
+| `/analytics` | 学情分析 | ✅ | 个人雷达图/趋势图 + 整体柱状图/热力图 |
+| `/settings` | 系统设置 | ✅ | 数据库导出 + 监视目录 + 系统信息 |
+
+> ✅ = 前端界面已完成 (Mock 数据)  
+> ⏳ = 待后端适配
+
+## 开发状态
+
+### ✅ 已完成
+- [x] 项目初始化 (Tauri + Vue 3 + TypeScript)
+- [x] 全局框架 (三栏式布局 + 路由 + 状态管理)
+- [x] 8 个页面 UI 开发 (符合界面设计文稿规范)
+- [x] Mock API 层 (接口契约定义 + 模拟数据)
+- [x] TypeScript 类型检查通过
+- [x] 前端构建成功
+
+### ⏳ 待开发
+- [ ] Rust 后端架构 (Commands → Services → Repositories)
+- [ ] 数据库设计与迁移 (SQLite + SQLx)
+- [ ] 核心算法实现 (掌握度计算、预警算法、冲突检测)
+- [ ] 前后端联调 (替换 Mock API 为 Tauri invoke)
+- [ ] 交互完善 (拖拽、键盘快捷键、二次确认)
+- [ ] 打包发布 (.msi / .exe)
+
+## 设计理念
+
+### 前端
+- **布局顺应眼动规律**：导航固定左侧，主内容居中，次要功能行尾
+- **色彩仅用于传递状态**：中性色构建基准面，红/绿/橙仅用于异常/成功/警示
+- **减少模态中断**：优先侧边面板/原地编辑，避免弹窗打断任务流
+
+### 后端 (待实现)
+- **接口契约优先**：前后端以结构化接口为唯一交互依据
+- **服务端无状态**：单次请求包含完整上下文
+- **分层职责单一**：接入层 → 领域层 → 持久层，单向依赖
+
+## 相关文档
+
+- [📋 需求规格说明](./教学助手系统需求说明.md)
+- [🎨 界面设计文稿](./界面设计文稿.md)
+- [🖼️ 后台管理系统界面设计理念](./后台管理系统界面设计理念.md)
+- [⚙️ 后端设计理念](./后端设计理念.md)
+- [📦 技术栈选型](./桌面外壳与后端应用形态技术栈.md)
+
+## 许可证
+
+内部项目，仅供个人使用。
