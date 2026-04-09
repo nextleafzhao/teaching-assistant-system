@@ -1,40 +1,72 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory } from "vue-router";
+import type { RouteRecordRaw } from "vue-router";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
-    component: () => import('../components/MainLayout.vue'),
+    path: "/",
+    component: () => import("../components/MainLayout.vue"),
     children: [
-      { path: '', name: 'Dashboard', component: () => import('../views/Dashboard.vue') },
-      { path: 'students', name: 'Students', component: () => import('../views/Students.vue') },
-      { path: 'schedule', name: 'Schedule', component: () => import('../views/Schedule.vue') },
-      { path: 'plans', name: 'Plans', component: () => import('../views/Plans.vue') },
-      { path: 'resources', name: 'Resources', component: () => import('../views/Resources.vue') },
-      { path: 'grades', name: 'Grades', component: () => import('../views/Grades.vue') },
-      { path: 'analytics', name: 'Analytics', component: () => import('../views/Analytics.vue') },
-      { path: 'settings', name: 'Settings', component: () => import('../views/Settings.vue') },
+      {
+        path: "",
+        name: "Dashboard",
+        component: () => import("../views/Dashboard.vue"),
+      },
+      {
+        path: "students",
+        name: "Students",
+        component: () => import("../views/Students.vue"),
+      },
+      {
+        path: "schedule",
+        name: "Schedule",
+        component: () => import("../views/Schedule.vue"),
+      },
+      {
+        path: "plans",
+        name: "Plans",
+        component: () => import("../views/Plans.vue"),
+      },
+      {
+        path: "resources",
+        name: "Resources",
+        component: () => import("../views/Resources.vue"),
+      },
+      {
+        path: "grades",
+        name: "Grades",
+        component: () => import("../views/Grades.vue"),
+      },
+      {
+        path: "analytics",
+        name: "Analytics",
+        component: () => import("../views/Analytics.vue"),
+      },
+      {
+        path: "settings",
+        name: "Settings",
+        component: () => import("../views/Settings.vue"),
+      },
     ],
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
 // 路由调试
 router.beforeEach((to, _from) => {
-  console.log('[Router]', _from.path, '->', to.path, '| name:', to.name)
-  return true
-})
+  console.log("[Router]", _from.path, "->", to.path, "| name:", to.name);
+  return true;
+});
 
 router.afterEach((to, _from, failure) => {
   if (failure) {
-    console.error('[Router] Navigation failed:', failure)
+    console.error("[Router] Navigation failed:", failure);
   } else {
-    console.log('[Router] Navigation complete:', to.path)
+    console.log("[Router] Navigation complete:", to.path);
   }
-})
+});
 
-export default router
+export default router;

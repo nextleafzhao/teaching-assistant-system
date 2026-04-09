@@ -46,8 +46,8 @@
           <n-dynamic-input v-model:value="examForm.knowledgePointScores" :on-create="onCreateKnowledgePoint">
             <template #default="{ value }">
               <n-space :wrap="true" :size="12">
-                <n-select v-model:value="value.knowledgePointId" :options="knowledgePointOptions"
-                  placeholder="选择知识点" style="width: 250px" />
+                <n-select v-model:value="value.knowledgePointId" :options="knowledgePointOptions" placeholder="选择知识点"
+                  style="width: 250px" />
                 <n-input-number v-model:value="value.pointTotal" :min="1" placeholder="配分" style="width: 120px" />
               </n-space>
             </template>
@@ -80,12 +80,11 @@
           </div>
 
           <!-- 学生行 -->
-          <div v-for="(record, index) in gradeRecords" :key="record.studentId" class="grade-row"
-            :class="{
-              'modified': isModified(record),
-              'absent': record.isAbsent,
-              'focused': focusedRowIndex === index
-            }" :ref="el => setRowRef(el as HTMLElement | null, index)">
+          <div v-for="(record, index) in gradeRecords" :key="record.studentId" class="grade-row" :class="{
+            'modified': isModified(record),
+            'absent': record.isAbsent,
+            'focused': focusedRowIndex === index
+          }" :ref="el => setRowRef(el as HTMLElement | null, index)">
             <div class="col-name">{{ record.studentName }}</div>
             <div class="col-score">
               <n-slider v-if="!record.isAbsent" v-model:value="record.score" :min="0" :max="maxScore" :step="1"
@@ -117,8 +116,8 @@
 
     <!-- 提交确认对话框 -->
     <n-modal v-model:show="showSubmitConfirm" preset="dialog" type="warning" title="确认提交"
-      content="提交后成绩将不可直接修改，7天后修改需填写原因。确定提交吗？" positive-text="确认提交" negative-text="取消"
-      @positive-click="submitGrades" @negative-click="showSubmitConfirm = false" />
+      content="提交后成绩将不可直接修改，7天后修改需填写原因。确定提交吗？" positive-text="确认提交" negative-text="取消" @positive-click="submitGrades"
+      @negative-click="showSubmitConfirm = false" />
   </div>
 </template>
 

@@ -30,8 +30,8 @@
         <!-- 左侧资源栏 -->
         <div class="resource-sidebar">
           <n-h6>学生列表（拖拽到日历创建课程）</n-h6>
-          <div v-for="student in studentStore.students" :key="student.id" class="draggable-student"
-            draggable="true" @dragstart="onDragStart($event, student)">
+          <div v-for="student in studentStore.students" :key="student.id" class="draggable-student" draggable="true"
+            @dragstart="onDragStart($event, student)">
             <span>{{ student.name }}</span>
             <span class="student-tag">{{ student.gradeName }}</span>
           </div>
@@ -65,7 +65,9 @@
                       <div class="course-status-dot" :class="course.status"></div>
                       <n-button text size="tiny" class="delete-btn" @click.stop="confirmDeleteCourse(course.id)">
                         <template #icon>
-                          <n-icon><CloseOutline /></n-icon>
+                          <n-icon>
+                            <CloseOutline />
+                          </n-icon>
                         </template>
                       </n-button>
                     </div>

@@ -1,52 +1,33 @@
 <template>
   <div class="students-page">
-      <n-card :bordered="false">
-        <template #header>
-          <n-space justify="space-between" align="center">
-            <span>学生管理</span>
-            <n-button type="primary" @click="showAddStudent = true">
-              <template #icon>
-                <n-icon><AddOutline /></n-icon>
-              </template>
-              新增学生
-            </n-button>
-          </n-space>
-        </template>
-
-        <!-- 筛选区 -->
-        <n-space :wrap="true" :size="12" class="filter-area">
-          <n-select
-            v-model:value="filterCohort"
-            :options="cohortOptions"
-            placeholder="选择届"
-            clearable
-            style="width: 150px"
-          />
-          <n-select
-            v-model:value="filterGrade"
-            :options="gradeOptions"
-            placeholder="选择年级"
-            clearable
-            style="width: 150px"
-          />
-          <n-select
-            v-model:value="filterTag"
-            :options="tagOptions"
-            placeholder="选择标签"
-            clearable
-            style="width: 180px"
-          />
+    <n-card :bordered="false">
+      <template #header>
+        <n-space justify="space-between" align="center">
+          <span>学生管理</span>
+          <n-button type="primary" @click="showAddStudent = true">
+            <template #icon>
+              <n-icon>
+                <AddOutline />
+              </n-icon>
+            </template>
+            新增学生
+          </n-button>
         </n-space>
+      </template>
 
-        <!-- 学生列表 -->
-        <n-data-table
-          :columns="columns"
-          :data="filteredStudents"
-          :loading="studentStore.loading"
-          :pagination="pagination"
-          :row-key="(row: Student) => row.id"
-        />
-      </n-card>
+      <!-- 筛选区 -->
+      <n-space :wrap="true" :size="12" class="filter-area">
+        <n-select v-model:value="filterCohort" :options="cohortOptions" placeholder="选择届" clearable
+          style="width: 150px" />
+        <n-select v-model:value="filterGrade" :options="gradeOptions" placeholder="选择年级" clearable
+          style="width: 150px" />
+        <n-select v-model:value="filterTag" :options="tagOptions" placeholder="选择标签" clearable style="width: 180px" />
+      </n-space>
+
+      <!-- 学生列表 -->
+      <n-data-table :columns="columns" :data="filteredStudents" :loading="studentStore.loading" :pagination="pagination"
+        :row-key="(row: Student) => row.id" />
+    </n-card>
 
     <!-- 新增学生模态框 -->
     <n-modal v-model:show="showAddStudent" preset="dialog" title="新增学生">
@@ -97,15 +78,13 @@
           <n-tab-pane name="overview" tab="教学进度">
             <n-empty description="暂无教学计划" v-if="studentPlans.length === 0" />
             <n-timeline v-else>
-              <n-timeline-item
-                v-for="plan in studentPlans"
-                :key="plan.id"
-                :type="plan.isLagging ? 'warning' : 'success'"
-                :title="plan.planName"
-                :content="`进度: ${plan.currentStep}/${plan.totalSteps}`"
-              >
+              <n-timeline-item v-for="plan in studentPlans" :key="plan.id"
+                :type="plan.isLagging ? 'warning' : 'success'" :title="plan.planName"
+                :content="`进度: ${plan.currentStep}/${plan.totalSteps}`">
                 <template v-if="plan.isLagging" #icon>
-                  <n-icon><WarningOutline /></n-icon>
+                  <n-icon>
+                    <WarningOutline />
+                  </n-icon>
                 </template>
               </n-timeline-item>
             </n-timeline>
@@ -120,12 +99,7 @@
           </n-tab-pane>
 
           <n-tab-pane name="memo" tab="专属备忘录">
-            <n-input
-              v-model:value="selectedStudent.memo"
-              type="textarea"
-              :rows="6"
-              placeholder="记录课堂表现、沟通记录等..."
-            />
+            <n-input v-model:value="selectedStudent.memo" type="textarea" :rows="6" placeholder="记录课堂表现、沟通记录等..." />
             <n-button type="primary" class="mt-8" @click="saveMemo">保存备忘录</n-button>
           </n-tab-pane>
         </n-tabs>
@@ -181,19 +155,19 @@ const pagination = {
 // 筛选后的学生列表
 const filteredStudents = computed(() => {
   let result = studentStore.students
-  
+
   if (filterCohort.value) {
     result = result.filter(s => s.cohortId === filterCohort.value)
   }
-  
+
   if (filterGrade.value) {
     result = result.filter(s => s.gradeId === filterGrade.value)
   }
-  
+
   if (filterTag.value) {
     result = result.filter(s => s.tags.includes(filterTag.value!))
   }
-  
+
   return result
 })
 
@@ -256,14 +230,14 @@ const columns = [
 
 onMounted(async () => {
   await studentStore.fetchStudents()
-  
+
   // 加载选项
   const cohorts = await api.getCohorts()
   cohortOptions.value = cohorts.map(c => ({ label: c.name, value: c.id }))
-  
+
   const grades = await api.getGrades()
   gradeOptions.value = grades.map(g => ({ label: g.name, value: g.id }))
-  
+
   // 收集所有标签
   const allTags = new Set<string>()
   studentStore.students.forEach(s => s.tags.forEach(t => allTags.add(t)))
@@ -273,7 +247,7 @@ onMounted(async () => {
 function viewDetail(student: Student) {
   selectedStudent.value = { ...student }
   showDetail.value = true
-  
+
   // Mock 教学计划数据
   studentPlans.value = [
     { id: 1, planName: '高二数学冲刺计划', currentStep: 2, totalSteps: 3, isLagging: false },
@@ -282,10 +256,10 @@ function viewDetail(student: Student) {
 
 async function addStudent() {
   if (!newStudent.value.name) return
-  
+
   const cohort = cohortOptions.value.find(c => c.value === newStudent.value.cohortId)
   const grade = gradeOptions.value.find(g => g.value === newStudent.value.gradeId)
-  
+
   await studentStore.addStudent({
     name: newStudent.value.name,
     cohortId: newStudent.value.cohortId,
@@ -297,7 +271,7 @@ async function addStudent() {
     memo: '',
     hasLagWarning: false,
   })
-  
+
   showAddStudent.value = false
   newStudent.value = { name: '', cohortId: 0, gradeId: 0, contactInfo: '', tags: [] }
 }
