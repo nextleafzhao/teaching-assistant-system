@@ -1,0 +1,296 @@
+## Origin
+
+[![logo][1]][2]
+
+## [tauri][2]2.10.3
+
+## Origin
+
+### Variants
+
+  * Local
+  * Remote
+
+
+
+### Trait Implementations
+
+  * Display
+
+
+
+### Auto Trait Implementations
+
+  * Freeze
+  * RefUnwindSafe
+  * Send
+  * Sync
+  * Unpin
+  * UnwindSafe
+
+
+
+### Blanket Implementations
+
+  * Any
+  * Borrow<T>
+  * BorrowMut<T>
+  * From<T>
+  * Into<U>
+  * ToString
+  * TryFrom<U>
+  * TryInto<U>
+
+
+
+## [In tauri::ipc][3]
+
+[tauri][4]::[ipc][3]
+
+# Enum Origin Copy item path
+
+[Source][5]
+[code] 
+    pub enum Origin {
+        Local,
+        Remote {
+            url: [Url][6],
+        },
+    }
+[/code]
+
+Expand description
+
+The origin trying to access the IPC.
+
+## Variants§
+
+§
+
+### Local
+
+Local app origin.
+
+§
+
+### Remote
+
+Remote origin.
+
+#### Fields
+
+§`url: [Url][6]`
+
+Remote URL.
+
+## Trait Implementations§
+
+[Source][7]§
+
+### impl [Display][8] for [Origin][9]
+
+[Source][10]§
+
+#### fn [fmt][11](&self, f: &mut [Formatter][12]<'_>) -> [Result][13]
+
+Formats the value using the given formatter. [Read more][11]
+
+## Auto Trait Implementations§
+
+§
+
+### impl [Freeze][14] for [Origin][9]
+
+§
+
+### impl [RefUnwindSafe][15] for [Origin][9]
+
+§
+
+### impl [Send][16] for [Origin][9]
+
+§
+
+### impl [Sync][17] for [Origin][9]
+
+§
+
+### impl [Unpin][18] for [Origin][9]
+
+§
+
+### impl [UnwindSafe][19] for [Origin][9]
+
+## Blanket Implementations§
+
+[Source][20]§
+
+### impl<T> [Any][21] for T
+
+where T: 'static + ?[Sized][22],
+
+[Source][23]§
+
+#### fn [type_id][24](&self) -> [TypeId][25]
+
+Gets the `TypeId` of `self`. [Read more][24]
+
+[Source][26]§
+
+### impl<T> [Borrow][27]<T> for T
+
+where T: ?[Sized][22],
+
+[Source][28]§
+
+#### fn [borrow][29](&self) -> [&T][30]
+
+Immutably borrows from an owned value. [Read more][29]
+
+[Source][31]§
+
+### impl<T> [BorrowMut][32]<T> for T
+
+where T: ?[Sized][22],
+
+[Source][33]§
+
+#### fn [borrow_mut][34](&mut self) -> [&mut T][30]
+
+Mutably borrows from an owned value. [Read more][34]
+
+[Source][35]§
+
+### impl<T> [From][36]<T> for T
+
+[Source][37]§
+
+#### fn [from][38](t: T) -> T
+
+Returns the argument unchanged.
+
+[Source][39]§
+
+### impl<T, U> [Into][40]<U> for T
+
+where U: [From][36]<T>,
+
+[Source][41]§
+
+#### fn [into][42](self) -> U
+
+Calls `U::from(self)`.
+
+That is, this conversion is whatever the implementation of `[From][36]<T> for U` chooses to do.
+
+[Source][43]§
+
+### impl<T> [ToString][44] for T
+
+where T: [Display][8] \+ ?[Sized][22],
+
+[Source][45]§
+
+#### fn [to_string][46](&self) -> [String][47]
+
+Converts the given value to a `String`. [Read more][46]
+
+[Source][48]§
+
+### impl<T, U> [TryFrom][49]<U> for T
+
+where U: [Into][40]<T>,
+
+[Source][50]§
+
+#### type [Error][51] = [Infallible][52]
+
+The type returned in the event of a conversion error.
+
+[Source][53]§
+
+#### fn [try_from][54](value: U) -> [Result][55]<T, <T as [TryFrom][49]<U>>::[Error][56]>
+
+Performs the conversion.
+
+[Source][57]§
+
+### impl<T, U> [TryInto][58]<U> for T
+
+where U: [TryFrom][49]<T>,
+
+[Source][59]§
+
+#### type [Error][60] = <U as [TryFrom][49]<T>>::[Error][56]
+
+The type returned in the event of a conversion error.
+
+[Source][61]§
+
+#### fn [try_into][62](self) -> [Result][55]<U, <U as [TryFrom][49]<T>>::[Error][56]>
+
+Performs the conversion.
+
+   [1]: https://github.com/tauri-apps/tauri/raw/dev/.github/icon.png
+   [2]: ../../tauri/index.html
+   [3]: index.html
+   [4]: ../index.html
+   [5]: ../../src/tauri/ipc/authority.rs.html#38-46
+   [6]: ../struct.Url.html (struct tauri::Url)
+   [7]: ../../src/tauri/ipc/authority.rs.html#48-55
+   [8]: https://doc.rust-lang.org/1.94.1/core/fmt/trait.Display.html (trait core::fmt::Display)
+   [9]: enum.Origin.html (enum tauri::ipc::Origin)
+   [10]: ../../src/tauri/ipc/authority.rs.html#49-54
+   [11]: https://doc.rust-lang.org/1.94.1/core/fmt/trait.Display.html#tymethod.fmt
+   [12]: https://doc.rust-lang.org/1.94.1/core/fmt/struct.Formatter.html (struct core::fmt::Formatter)
+   [13]: https://doc.rust-lang.org/1.94.1/core/fmt/type.Result.html (type core::fmt::Result)
+   [14]: https://doc.rust-lang.org/1.94.1/core/marker/trait.Freeze.html (trait core::marker::Freeze)
+   [15]: https://doc.rust-lang.org/1.94.1/core/panic/unwind_safe/trait.RefUnwindSafe.html (trait core::panic::unwind_safe::RefUnwindSafe)
+   [16]: https://doc.rust-lang.org/1.94.1/core/marker/trait.Send.html (trait core::marker::Send)
+   [17]: https://doc.rust-lang.org/1.94.1/core/marker/trait.Sync.html (trait core::marker::Sync)
+   [18]: https://doc.rust-lang.org/1.94.1/core/marker/trait.Unpin.html (trait core::marker::Unpin)
+   [19]: https://doc.rust-lang.org/1.94.1/core/panic/unwind_safe/trait.UnwindSafe.html (trait core::panic::unwind_safe::UnwindSafe)
+   [20]: https://doc.rust-lang.org/1.94.1/src/core/any.rs.html#138
+   [21]: https://doc.rust-lang.org/1.94.1/core/any/trait.Any.html (trait core::any::Any)
+   [22]: https://doc.rust-lang.org/1.94.1/core/marker/trait.Sized.html (trait core::marker::Sized)
+   [23]: https://doc.rust-lang.org/1.94.1/src/core/any.rs.html#139
+   [24]: https://doc.rust-lang.org/1.94.1/core/any/trait.Any.html#tymethod.type_id
+   [25]: https://doc.rust-lang.org/1.94.1/core/any/struct.TypeId.html (struct core::any::TypeId)
+   [26]: https://doc.rust-lang.org/1.94.1/src/core/borrow.rs.html#212
+   [27]: https://doc.rust-lang.org/1.94.1/core/borrow/trait.Borrow.html (trait core::borrow::Borrow)
+   [28]: https://doc.rust-lang.org/1.94.1/src/core/borrow.rs.html#214
+   [29]: https://doc.rust-lang.org/1.94.1/core/borrow/trait.Borrow.html#tymethod.borrow
+   [30]: https://doc.rust-lang.org/1.94.1/std/primitive.reference.html
+   [31]: https://doc.rust-lang.org/1.94.1/src/core/borrow.rs.html#221
+   [32]: https://doc.rust-lang.org/1.94.1/core/borrow/trait.BorrowMut.html (trait core::borrow::BorrowMut)
+   [33]: https://doc.rust-lang.org/1.94.1/src/core/borrow.rs.html#222
+   [34]: https://doc.rust-lang.org/1.94.1/core/borrow/trait.BorrowMut.html#tymethod.borrow_mut
+   [35]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#785
+   [36]: https://doc.rust-lang.org/1.94.1/core/convert/trait.From.html (trait core::convert::From)
+   [37]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#788
+   [38]: https://doc.rust-lang.org/1.94.1/core/convert/trait.From.html#tymethod.from
+   [39]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#767-769
+   [40]: https://doc.rust-lang.org/1.94.1/core/convert/trait.Into.html (trait core::convert::Into)
+   [41]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#777
+   [42]: https://doc.rust-lang.org/1.94.1/core/convert/trait.Into.html#tymethod.into
+   [43]: https://doc.rust-lang.org/1.94.1/src/alloc/string.rs.html#2893
+   [44]: https://doc.rust-lang.org/1.94.1/alloc/string/trait.ToString.html (trait alloc::string::ToString)
+   [45]: https://doc.rust-lang.org/1.94.1/src/alloc/string.rs.html#2895
+   [46]: https://doc.rust-lang.org/1.94.1/alloc/string/trait.ToString.html#tymethod.to_string
+   [47]: https://doc.rust-lang.org/1.94.1/alloc/string/struct.String.html (struct alloc::string::String)
+   [48]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#827-829
+   [49]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryFrom.html (trait core::convert::TryFrom)
+   [50]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#831
+   [51]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryFrom.html#associatedtype.Error
+   [52]: https://doc.rust-lang.org/1.94.1/core/convert/enum.Infallible.html (enum core::convert::Infallible)
+   [53]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#834
+   [54]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryFrom.html#tymethod.try_from
+   [55]: https://doc.rust-lang.org/1.94.1/core/result/enum.Result.html (enum core::result::Result)
+   [56]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryFrom.html#associatedtype.Error (type core::convert::TryFrom::Error)
+   [57]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#811-813
+   [58]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryInto.html (trait core::convert::TryInto)
+   [59]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#815
+   [60]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryInto.html#associatedtype.Error
+   [61]: https://doc.rust-lang.org/1.94.1/src/core/convert/mod.rs.html#818
+   [62]: https://doc.rust-lang.org/1.94.1/core/convert/trait.TryInto.html#tymethod.try_into
+
