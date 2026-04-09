@@ -26,32 +26,53 @@
         </n-space>
       </template>
 
-      <!-- 日历网格 -->
-      <div class="calendar-grid">
-        <!-- 表头：星期 -->
-        <div class="calendar-header">
-          <div class="time-column-header"></div>
-          <div v-for="(day, index) in weekDays" :key="index" class="day-header">
-            <div>{{ day.name }}</div>
-            <div class="day-date">{{ day.date }}</div>
+      <div class="schedule-layout">
+        <!-- 左侧资源栏 -->
+        <div class="resource-sidebar">
+          <n-h6>学生列表（拖拽到日历创建课程）</n-h6>
+          <div v-for="student in studentStore.students" :key="student.id" class="draggable-student"
+            draggable="true" @dragstart="onDragStart($event, student)">
+            <span>{{ student.name }}</span>
+            <span class="student-tag">{{ student.gradeName }}</span>
           </div>
         </div>
 
-        <!-- 时间网格 -->
-        <div class="calendar-body">
-          <div v-for="hour in hours" :key="hour" class="time-row">
-            <div class="time-label">{{ String(hour).padStart(2, '0') }}:00</div>
-            <div v-for="(day, dayIndex) in weekDays" :key="dayIndex" class="time-cell"
-              @click="onCellClick(day.date, hour)">
-              <!-- 课程卡片 -->
-              <div v-for="course in getCoursesForCell(day.date, hour)" :key="course.id" class="course-card"
-                :class="course.status" @click.stop="editCourse(course)">
-                <div class="course-header">
-                  <span class="course-students">{{ course.studentNames.join(', ') }}</span>
-                  <div class="course-status-dot" :class="course.status"></div>
+        <!-- 日历网格 -->
+        <div class="calendar-grid">
+          <!-- 表头：星期 -->
+          <div class="calendar-header">
+            <div class="time-column-header"></div>
+            <div v-for="(day, index) in weekDays" :key="index" class="day-header">
+              <div>{{ day.name }}</div>
+              <div class="day-date">{{ day.date }}</div>
+            </div>
+          </div>
+
+          <!-- 时间网格 -->
+          <div class="calendar-body">
+            <div v-for="hour in hours" :key="hour" class="time-row">
+              <div class="time-label">{{ String(hour).padStart(2, '0') }}:00</div>
+              <div v-for="(day, dayIndex) in weekDays" :key="dayIndex" class="time-cell"
+                :class="{ 'drag-over': dragOverCell && dragOverCell.date === day.fullDate && dragOverCell.hour === hour }"
+                @click="onCellClick(day.fullDate, hour)" @dragover.prevent="onDragOver(day.fullDate, hour)"
+                @dragleave="onDragLeave" @drop="onDrop(day.fullDate, hour)">
+                <!-- 课程卡片 -->
+                <div v-for="course in getCoursesForCell(day.fullDate, hour)" :key="course.id" class="course-card"
+                  :class="course.status" @click.stop="editCourse(course)">
+                  <div class="course-header">
+                    <span class="course-students">{{ course.studentNames.join(', ') }}</span>
+                    <div class="course-actions">
+                      <div class="course-status-dot" :class="course.status"></div>
+                      <n-button text size="tiny" class="delete-btn" @click.stop="confirmDeleteCourse(course.id)">
+                        <template #icon>
+                          <n-icon><CloseOutline /></n-icon>
+                        </template>
+                      </n-button>
+                    </div>
+                  </div>
+                  <div class="course-content">{{ course.content }}</div>
+                  <div class="course-time">{{ course.startTime }} - {{ course.endTime }}</div>
                 </div>
-                <div class="course-content">{{ course.content }}</div>
-                <div class="course-time">{{ course.startTime }} - {{ course.endTime }}</div>
               </div>
             </div>
           </div>
@@ -97,17 +118,24 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { AddOutline } from '@vicons/ionicons5'
+import { useMessage, useDialog } from 'naive-ui'
+import { AddOutline, CloseOutline } from '@vicons/ionicons5'
 import { useCourseStore } from '../stores/courseStore'
 import { useStudentStore } from '../stores/studentStore'
-import type { Course } from '../types'
+import type { Course, Student } from '../types'
 import * as api from '../api/mockApi'
 
 const courseStore = useCourseStore()
 const studentStore = useStudentStore()
+const message = useMessage()
+const dialog = useDialog()
 
 const showAddCourse = ref(false)
 const editingCourse = ref<Course | null>(null)
+
+// 拖拽状态
+const dragStudentId = ref<number | null>(null)
+const dragOverCell = ref<{ date: string; hour: number } | null>(null)
 
 // 当前周
 const currentWeekStart = ref(new Date())
@@ -167,17 +195,62 @@ const weekLabel = computed(() => {
 
 // 获取某个时间格的课程
 function getCoursesForCell(date: string, hour: number) {
-  const dateStr = date || weekDays.value.find((_, i) => {
-    const d = new Date(currentWeekStart.value)
-    d.setDate(d.getDate() + i)
-    return d.toISOString().split('T')[0] === date
-  })?.fullDate
-
   return courseStore.courses.filter(c => {
-    if (!dateStr) return false
     const [startHour] = c.startTime.split(':').map(Number)
-    return c.date === dateStr && startHour === hour
+    return c.date === date && startHour === hour
   })
+}
+
+// 拖拽事件
+function onDragStart(event: DragEvent, student: Student) {
+  dragStudentId.value = student.id
+  event.dataTransfer!.effectAllowed = 'copy'
+  console.log('[Schedule] Drag start:', student.name)
+}
+
+function onDragOver(date: string, hour: number) {
+  dragOverCell.value = { date, hour }
+}
+
+function onDragLeave() {
+  dragOverCell.value = null
+}
+
+async function onDrop(date: string, hour: number) {
+  dragOverCell.value = null
+
+  if (!dragStudentId.value) return
+
+  const student = studentStore.students.find(s => s.id === dragStudentId.value)
+  if (!student) return
+
+  console.log('[Schedule] Drop:', student.name, 'on', date, hour)
+
+  // 检查冲突
+  const startTime = `${String(hour).padStart(2, '0')}:00`
+  const endTime = `${String(hour + 1).padStart(2, '0')}:00`
+  const hasConflict = await courseStore.checkConflict(dragStudentId.value, date, startTime, endTime)
+
+  if (hasConflict) {
+    message.warning(`冲突：${student.name} 在该时段已有课程`)
+    dragStudentId.value = null
+    return
+  }
+
+  // 预填表单并弹出
+  courseForm.value = {
+    studentIds: [dragStudentId.value],
+    date: new Date(date).getTime(),
+    startTime,
+    endTime,
+    content: '',
+    planId: null,
+    status: 'planned',
+  }
+  editingCourse.value = null
+  showAddCourse.value = true
+
+  dragStudentId.value = null
 }
 
 function changeWeek(delta: number) {
@@ -202,15 +275,7 @@ async function loadCourses() {
 }
 
 function onCellClick(date: string, hour: number) {
-  const day = weekDays.value.find((_, i) => {
-    const d = new Date(currentWeekStart.value)
-    d.setDate(d.getDate() + i)
-    return d.toISOString().split('T')[0] === date
-  })
-
-  if (!day) return
-
-  courseForm.value.date = new Date(day.fullDate).getTime()
+  courseForm.value.date = new Date(date).getTime()
   courseForm.value.startTime = `${String(hour).padStart(2, '0')}:00`
   courseForm.value.endTime = `${String(hour + 1).padStart(2, '0')}:00`
   editingCourse.value = null
@@ -233,7 +298,37 @@ function editCourse(course: Course) {
 
 async function saveCourse() {
   if (courseForm.value.studentIds.length === 0 || !courseForm.value.content) {
+    message.warning('请选择学生并填写课程内容')
     return
+  }
+
+  // 检查每个学生的冲突（排除当前编辑的课程）
+  for (const studentId of courseForm.value.studentIds) {
+    const hasConflict = await courseStore.checkConflict(
+      studentId,
+      new Date(courseForm.value.date).toISOString().split('T')[0],
+      courseForm.value.startTime,
+      courseForm.value.endTime
+    )
+
+    // 如果是编辑模式，排除当前课程
+    if (hasConflict && editingCourse.value) {
+      const existingCourses = courseStore.courses.filter(c =>
+        c.studentIds.includes(studentId) &&
+        c.date === new Date(courseForm.value.date).toISOString().split('T')[0] &&
+        c.startTime === courseForm.value.startTime &&
+        c.id !== editingCourse.value!.id
+      )
+      if (existingCourses.length > 0) {
+        const student = studentStore.students.find(s => s.id === studentId)
+        message.warning(`冲突：${student?.name} 在该时段已有课程`)
+        return
+      }
+    } else if (hasConflict) {
+      const student = studentStore.students.find(s => s.id === studentId)
+      message.warning(`冲突：${student?.name} 在该时段已有课程`)
+      return
+    }
   }
 
   const dateStr = new Date(courseForm.value.date).toISOString().split('T')[0]
@@ -253,6 +348,7 @@ async function saveCourse() {
       planId: courseForm.value.planId || undefined,
       status: courseForm.value.status,
     })
+    message.success('课程已更新')
   } else {
     await courseStore.addCourse({
       studentIds: courseForm.value.studentIds,
@@ -264,6 +360,7 @@ async function saveCourse() {
       planId: courseForm.value.planId || undefined,
       status: courseForm.value.status,
     })
+    message.success('课程已创建')
   }
 
   showAddCourse.value = false
@@ -279,9 +376,21 @@ async function saveCourse() {
   }
 }
 
-function applyTemplate(templateId: number) {
-  // Mock: 应用课时模板
-  console.log('Apply template:', templateId)
+function applyTemplate(_templateId: number) {
+  message.info('应用模板功能待实现')
+}
+
+function confirmDeleteCourse(id: number) {
+  dialog.warning({
+    title: '确认删除',
+    content: '确定要删除此课程吗？此操作不可撤销。',
+    positiveText: '删除',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      await courseStore.removeCourse(id)
+      message.success('课程已删除')
+    },
+  })
 }
 
 onMounted(async () => {
@@ -311,7 +420,55 @@ onMounted(async () => {
   font-size: 16px;
 }
 
+.schedule-layout {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.resource-sidebar {
+  width: 200px;
+  flex-shrink: 0;
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 12px;
+}
+
+.resource-sidebar h6 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.draggable-student {
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  cursor: grab;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.draggable-student:hover {
+  background: #e8f4ff;
+}
+
+.draggable-student:active {
+  cursor: grabbing;
+}
+
+.student-tag {
+  font-size: 12px;
+  color: #999;
+}
+
 .calendar-grid {
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -349,7 +506,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   overflow: auto;
-  max-height: calc(100vh - 280px);
+  max-height: calc(100vh - 320px);
 }
 
 .time-row {
@@ -374,10 +531,16 @@ onMounted(async () => {
   padding: 2px;
   position: relative;
   cursor: pointer;
+  transition: background 0.1s;
 }
 
 .time-cell:hover {
-  background: #f5f5f5;
+  background: #f0f7ff;
+}
+
+.time-cell.drag-over {
+  background: #e8f4ff;
+  box-shadow: inset 0 0 0 2px #2080F0;
 }
 
 .course-card {
@@ -405,6 +568,21 @@ onMounted(async () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
+}
+
+.course-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.delete-btn {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.course-card:hover .delete-btn {
+  opacity: 1;
 }
 
 .course-students {

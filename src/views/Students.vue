@@ -136,6 +136,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, h } from 'vue'
+import { useDialog, useMessage } from 'naive-ui'
 import { NButton, NIcon, NSpace, NTag } from 'naive-ui'
 import { AddOutline, WarningOutline } from '@vicons/ionicons5'
 import { useStudentStore } from '../stores/studentStore'
@@ -143,6 +144,8 @@ import type { Student } from '../types'
 import * as api from '../api/mockApi'
 
 const studentStore = useStudentStore()
+const dialog = useDialog()
+const message = useMessage()
 
 const showAddStudent = ref(false)
 const showDetail = ref(false)
@@ -231,12 +234,22 @@ const columns = [
   {
     title: '操作',
     key: 'actions',
-    width: 120,
+    width: 180,
     render(row: Student) {
-      return h(NButton, {
-        size: 'small',
-        onClick: () => viewDetail(row),
-      }, { default: () => '查看详情' })
+      return h(NSpace, { size: 4 }, {
+        default: () => [
+          h(NButton, {
+            size: 'small',
+            onClick: () => viewDetail(row),
+          }, { default: () => '查看详情' }),
+          h(NButton, {
+            size: 'small',
+            type: 'error',
+            secondary: true,
+            onClick: () => confirmDeleteStudent(row.id, row.name),
+          }, { default: () => '删除' }),
+        ],
+      })
     },
   },
 ]
@@ -294,7 +307,21 @@ async function saveMemo() {
     await studentStore.updateStudent(selectedStudent.value.id, {
       memo: selectedStudent.value.memo,
     })
+    message.success('备忘录已保存')
   }
+}
+
+function confirmDeleteStudent(id: number, name: string) {
+  dialog.warning({
+    title: '确认删除',
+    content: `确定要删除学生"${name}"吗？此操作不可撤销。`,
+    positiveText: '删除',
+    negativeText: '取消',
+    onPositiveClick: async () => {
+      await studentStore.removeStudent(id)
+      message.success(`学生"${name}"已删除`)
+    },
+  })
 }
 </script>
 
