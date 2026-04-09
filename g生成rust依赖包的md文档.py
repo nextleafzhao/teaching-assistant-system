@@ -90,7 +90,7 @@ def main():
         print(f"创建临时项目: {temp_path}")
 
         print("初始化临时 Rust 项目...")
-        run_cmd(["cargo", "init", "--name", "temp_doc_gen"], cwd=temp_path)
+        run_cmd(["cargo", "init", "--name", "temp_doc_gen", "--vcs", "none"], cwd=temp_path)
 
         # 添加依赖
         add_cmd = ["cargo", "add", args.package]
