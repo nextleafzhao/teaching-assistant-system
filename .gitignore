@@ -23,3 +23,25 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Rust build output
+src-tauri/target/
+
+# Database files (runtime only)
+*.db
+*.sqlite
+*.sqlite3
+
+# Auto-generated files
+components.d.ts
+
+# Backup files
+*.bak
+*.backup
+
+# Environment variables
+.env*
+!.env.example
+
+# Windows system files
+Thumbs.db
