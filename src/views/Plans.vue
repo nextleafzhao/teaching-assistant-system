@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="plans-page">
+  <div class="plans-page">
       <n-card :bordered="false">
         <template #header>
           <n-space justify="space-between" align="center">
@@ -79,14 +78,13 @@
         </n-space>
       </template>
     </n-modal>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, h } from 'vue'
 import { NButton, NSpace, NTag, NProgress } from 'naive-ui'
 import { AddOutline } from '@vicons/ionicons5'
-import MainLayout from '../components/MainLayout.vue'
 import type { TeachingPlan, PlanAssignment } from '../types'
 import * as api from '../api/mockApi'
 

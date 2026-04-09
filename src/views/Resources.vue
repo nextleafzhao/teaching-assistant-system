@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="resources-page">
+  <div class="resources-page">
       <n-card :bordered="false">
         <template #header>
           <n-space justify="space-between" align="center">
@@ -100,14 +99,13 @@
         </template>
       </n-drawer-content>
     </n-drawer>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, h } from 'vue'
 import { NButton, NSpace, NIcon, NTag, NRadio, NRadioGroup } from 'naive-ui'
 import { FolderOpenOutline, WarningOutline, DocumentTextOutline } from '@vicons/ionicons5'
-import MainLayout from '../components/MainLayout.vue'
 import type { MaterialUsageLog } from '../types'
 import * as api from '../api/mockApi'
 import { useStudentStore } from '../stores/studentStore'

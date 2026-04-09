@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="schedule-page">
+  <div class="schedule-page">
       <n-card :bordered="false">
         <template #header>
           <n-space justify="space-between" align="center">
@@ -119,13 +118,12 @@
         </n-space>
       </template>
     </n-modal>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { AddOutline } from '@vicons/ionicons5'
-import MainLayout from '../components/MainLayout.vue'
 import { useCourseStore } from '../stores/courseStore'
 import { useStudentStore } from '../stores/studentStore'
 import type { Course } from '../types'

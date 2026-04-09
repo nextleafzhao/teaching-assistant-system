@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="analytics-page">
+  <div class="analytics-page">
       <n-card :bordered="false">
         <template #header>
           <n-space justify="space-between" align="center">
@@ -68,7 +67,7 @@
         </div>
       </n-card>
     </div>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -84,7 +83,6 @@ import {
   GridComponent,
 } from 'echarts/components'
 import VChart from 'vue-echarts'
-import MainLayout from '../components/MainLayout.vue'
 import { useStudentStore } from '../stores/studentStore'
 
 // 注册 ECharts 组件

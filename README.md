@@ -91,10 +91,7 @@ npm run tauri dev
 ### 停止服务
 
 ```bash
-# 停止 Node.js 开发服务器
-taskkill /F /IM node.exe
-
-# 或停止特定进程
+# 停止特定进程
 taskkill /F /T /PID <PID>
 ```
 

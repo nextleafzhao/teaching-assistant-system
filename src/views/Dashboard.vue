@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="dashboard">
+  <div class="dashboard">
       <n-grid :cols="2" :x-gap="20">
         <!-- 待办事项 -->
         <n-grid-item>
@@ -94,16 +93,14 @@
         </n-space>
       </template>
     </n-modal>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import MainLayout from '../components/MainLayout.vue'
 import { useMemoTodoStore } from '../stores/memoTodoStore'
 import type { MemoTodo } from '../types'
 
-const layoutRef = ref<InstanceType<typeof MainLayout>>()
 const todoStore = useMemoTodoStore()
 
 const showAddTodo = ref(false)

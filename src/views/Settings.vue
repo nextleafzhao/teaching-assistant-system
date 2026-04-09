@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="settings-page">
+  <div class="settings-page">
       <n-card :bordered="false" title="系统设置">
         <n-tabs type="line">
           <!-- 数据备份 -->
@@ -53,13 +52,12 @@
         </n-tabs>
       </n-card>
     </div>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { DownloadOutline } from '@vicons/ionicons5'
-import MainLayout from '../components/MainLayout.vue'
 
 const watchedDirectories = ref<string[]>([
   'D:\\TeachingMaterials',

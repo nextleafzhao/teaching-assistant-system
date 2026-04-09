@@ -1,28 +1,14 @@
 <template>
   <n-layout has-sider class="app-layout">
     <!-- 左侧导航栏 -->
-    <n-layout-sider
-      bordered
-      collapse-mode="width"
-      :collapsed-width="64"
-      :width="220"
-      :native-scrollbar="false"
-      show-trigger
-      @collapse="collapsed = true"
-      @expand="collapsed = false"
-    >
+    <n-layout-sider bordered collapse-mode="width" :collapsed-width="64" :width="220" :native-scrollbar="false"
+      show-trigger @collapse="collapsed = true" @expand="collapsed = false">
       <div class="logo">
         <h2 v-if="!collapsed">教学助手</h2>
         <h2 v-else>助教</h2>
       </div>
-      <n-menu
-        :options="menuOptions"
-        :collapsed="collapsed"
-        :collapsed-width="64"
-        :collapsed-icon-size="22"
-        :icon-size="20"
-        v-model:value="activeKey"
-      />
+      <n-menu :options="menuOptions" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+        :icon-size="20" :value="activeKey" @update:value="handleMenuUpdate" />
     </n-layout-sider>
 
     <!-- 中间主内容区 -->
@@ -31,11 +17,7 @@
     </n-layout-content>
 
     <!-- 右侧抽屉 -->
-    <n-drawer
-      v-model:show="showDrawer"
-      :width="500"
-      placement="right"
-    >
+    <n-drawer v-model:show="showDrawer" :width="500" placement="right">
       <n-drawer-content :title="drawerTitle" closable>
         <slot name="drawer" />
       </n-drawer-content>
@@ -132,14 +114,10 @@ const menuOptions: MenuOption[] = [
   },
 ]
 
-// 菜单点击事件
-menuOptions.forEach(option => {
-  if (option.key) {
-    option.props = {
-      onClick: () => router.push({ name: option.key as string }),
-    }
-  }
-})
+// 菜单点击事件处理
+function handleMenuUpdate(key: string) {
+  router.push({ name: key })
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="students-page">
+  <div class="students-page">
       <n-card :bordered="false">
         <template #header>
           <n-space justify="space-between" align="center">
@@ -133,20 +132,18 @@
         </n-tabs>
       </n-drawer-content>
     </n-drawer>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, h } from 'vue'
 import { NButton, NIcon, NSpace, NTag } from 'naive-ui'
 import { AddOutline, WarningOutline } from '@vicons/ionicons5'
-import MainLayout from '../components/MainLayout.vue'
 import { useStudentStore } from '../stores/studentStore'
 import type { Student } from '../types'
 import * as api from '../api/mockApi'
 
 const studentStore = useStudentStore()
-const layoutRef = ref<InstanceType<typeof MainLayout>>()
 
 const showAddStudent = ref(false)
 const showDetail = ref(false)

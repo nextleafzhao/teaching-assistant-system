@@ -1,6 +1,5 @@
 <template>
-  <MainLayout ref="layoutRef">
-    <div class="grades-page">
+  <div class="grades-page">
       <n-card :bordered="false">
         <template #header>
           <n-space justify="space-between" align="center">
@@ -102,14 +101,13 @@
         </n-space>
       </n-space>
     </n-modal>
-  </MainLayout>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, h } from 'vue'
 import { NButton, NSpace, NInputNumber, NCheckbox, NAlert, NSlider } from 'naive-ui'
 import { AddOutline } from '@vicons/ionicons5'
-import MainLayout from '../components/MainLayout.vue'
 import type { Exam, GradeRecord, KnowledgePoint } from '../types'
 import * as api from '../api/mockApi'
 import { useStudentStore } from '../stores/studentStore'
