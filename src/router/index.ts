@@ -23,4 +23,18 @@ const router = createRouter({
   routes,
 })
 
+// 路由调试
+router.beforeEach((to, _from) => {
+  console.log('[Router]', _from.path, '->', to.path, '| name:', to.name)
+  return true
+})
+
+router.afterEach((to, _from, failure) => {
+  if (failure) {
+    console.error('[Router] Navigation failed:', failure)
+  } else {
+    console.log('[Router] Navigation complete:', to.path)
+  }
+})
+
 export default router

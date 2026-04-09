@@ -1,59 +1,55 @@
 <template>
   <div class="dashboard">
-      <n-grid :cols="2" :x-gap="20">
-        <!-- 待办事项 -->
-        <n-grid-item>
-          <n-card title="待办事项" :bordered="false">
-            <template #header-extra>
-              <n-button type="primary" size="small" @click="showAddTodo = true">
-                新增待办
-              </n-button>
-            </template>
-            
-            <n-empty v-if="todoStore.todos.length === 0" description="暂无待办事项" />
-            
-            <n-list v-else>
-              <n-list-item v-for="todo in todoStore.todos" :key="todo.id">
-                <div class="todo-item" :class="{ overdue: todo.isOverdue }">
-                  <n-checkbox
-                    :checked="todo.isCompleted"
-                    @update:checked="todoStore.completeItem(todo.id)"
-                  />
-                  <div class="todo-content">
-                    <div class="todo-title">{{ todo.title }}</div>
-                    <div v-if="todo.dueDate" class="todo-date">截止: {{ todo.dueDate }}</div>
-                    <div v-if="todo.isOverdue" class="todo-overdue">已逾期</div>
-                  </div>
-                </div>
-              </n-list-item>
-            </n-list>
-          </n-card>
-        </n-grid-item>
+    <n-grid :cols="2" :x-gap="20">
+      <!-- 待办事项 -->
+      <n-grid-item>
+        <n-card title="待办事项" :bordered="false">
+          <template #header-extra>
+            <n-button type="primary" size="small" @click="showAddTodo = true">
+              新增待办
+            </n-button>
+          </template>
 
-        <!-- 备忘录 -->
-        <n-grid-item>
-          <n-card title="备忘录" :bordered="false">
-            <template #header-extra>
-              <n-button type="primary" size="small" @click="showAddMemo = true">
-                新增备忘
-              </n-button>
-            </template>
-            
-            <n-empty v-if="todoStore.memos.length === 0" description="暂无备忘录" />
-            
-            <n-list v-else>
-              <n-list-item v-for="memo in todoStore.memos" :key="memo.id">
-                <div class="memo-item">
-                  <div class="memo-title">{{ memo.title }}</div>
-                  <div class="memo-content">{{ memo.content }}</div>
-                  <div class="memo-date">{{ memo.createdAt }}</div>
+          <n-empty v-if="todoStore.todos.length === 0" description="暂无待办事项" />
+
+          <n-list v-else>
+            <n-list-item v-for="todo in todoStore.todos" :key="todo.id">
+              <div class="todo-item" :class="{ overdue: todo.isOverdue }">
+                <n-checkbox :checked="todo.isCompleted" @update:checked="todoStore.completeItem(todo.id)" />
+                <div class="todo-content">
+                  <div class="todo-title">{{ todo.title }}</div>
+                  <div v-if="todo.dueDate" class="todo-date">截止: {{ todo.dueDate }}</div>
+                  <div v-if="todo.isOverdue" class="todo-overdue">已逾期</div>
                 </div>
-              </n-list-item>
-            </n-list>
-          </n-card>
-        </n-grid-item>
-      </n-grid>
-    </div>
+              </div>
+            </n-list-item>
+          </n-list>
+        </n-card>
+      </n-grid-item>
+
+      <!-- 备忘录 -->
+      <n-grid-item>
+        <n-card title="备忘录" :bordered="false">
+          <template #header-extra>
+            <n-button type="primary" size="small" @click="showAddMemo = true">
+              新增备忘
+            </n-button>
+          </template>
+
+          <n-empty v-if="todoStore.memos.length === 0" description="暂无备忘录" />
+
+          <n-list v-else>
+            <n-list-item v-for="memo in todoStore.memos" :key="memo.id">
+              <div class="memo-item">
+                <div class="memo-title">{{ memo.title }}</div>
+                <div class="memo-content">{{ memo.content }}</div>
+                <div class="memo-date">{{ memo.createdAt }}</div>
+              </div>
+            </n-list-item>
+          </n-list>
+        </n-card>
+      </n-grid-item>
+    </n-grid>
 
     <!-- 新增待办模态框 -->
     <n-modal v-model:show="showAddTodo" preset="dialog" title="新增待办事项">
@@ -123,7 +119,7 @@ onMounted(() => {
 
 async function addTodo() {
   if (!newTodo.value.title) return
-  
+
   const item: Omit<MemoTodo, 'id' | 'createdAt'> = {
     type: 'todo',
     title: newTodo.value.title,
@@ -133,7 +129,7 @@ async function addTodo() {
     isCompleted: false,
     isOverdue: false,
   }
-  
+
   await todoStore.addItem(item)
   showAddTodo.value = false
   newTodo.value = { title: '', content: '', dueDate: 0 }
@@ -141,7 +137,7 @@ async function addTodo() {
 
 async function addMemo() {
   if (!newMemo.value.title) return
-  
+
   const item: Omit<MemoTodo, 'id' | 'createdAt'> = {
     type: 'memo',
     title: newMemo.value.title,
@@ -150,7 +146,7 @@ async function addMemo() {
     isCompleted: false,
     isOverdue: false,
   }
-  
+
   await todoStore.addItem(item)
   showAddMemo.value = false
   newMemo.value = { title: '', content: '' }

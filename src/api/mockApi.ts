@@ -300,21 +300,30 @@ export const MOCK_MATERIAL_TYPES: MaterialType[] = [
 
 // ===== API 函数 (Mock 实现) =====
 
+const DEBUG = true // 生产环境设为 false 关闭调试日志
+
 let nextStudentId = 4
 let nextCourseId = 4
 let nextExamId = 2
 
+function log(tag: string, ...args: any[]) {
+  if (DEBUG) console.log(`[API:${tag}]`, ...args)
+}
+
 export async function getStudents(): Promise<Student[]> {
+  log('getStudents')
   return Promise.resolve(MOCK_STUDENTS)
 }
 
 export async function createStudent(student: Omit<Student, 'id'>): Promise<Student> {
+  log('createStudent', student.name)
   const newStudent: Student = { ...student, id: nextStudentId++ }
   MOCK_STUDENTS.push(newStudent)
   return Promise.resolve(newStudent)
 }
 
 export async function updateStudent(id: number, data: Partial<Student>): Promise<Student> {
+  log('updateStudent', id, data)
   const index = MOCK_STUDENTS.findIndex(s => s.id === id)
   if (index === -1) throw new Error('学生不存在')
   MOCK_STUDENTS[index] = { ...MOCK_STUDENTS[index], ...data }
@@ -322,17 +331,19 @@ export async function updateStudent(id: number, data: Partial<Student>): Promise
 }
 
 export async function deleteStudent(id: number): Promise<void> {
+  log('deleteStudent', id)
   const index = MOCK_STUDENTS.findIndex(s => s.id === id)
   if (index !== -1) MOCK_STUDENTS.splice(index, 1)
   return Promise.resolve()
 }
 
 export async function getCourses(_weekStart: string): Promise<Course[]> {
-  // 简单模拟，返回所有课程
+  log('getCourses', _weekStart)
   return Promise.resolve(MOCK_COURSES)
 }
 
 export async function createCourse(course: Omit<Course, 'id'>): Promise<Course> {
+  log('createCourse', course.studentNames, course.date)
   const newCourse: Course = { ...course, id: nextCourseId++ }
   MOCK_COURSES.push(newCourse)
   return Promise.resolve(newCourse)

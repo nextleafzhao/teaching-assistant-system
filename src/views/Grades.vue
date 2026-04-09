@@ -1,27 +1,24 @@
 <template>
   <div class="grades-page">
-      <n-card :bordered="false">
-        <template #header>
-          <n-space justify="space-between" align="center">
-            <span>成绩管理</span>
-            <n-button type="primary" @click="showCreateExam = true">
-              <template #icon>
-                <n-icon><AddOutline /></n-icon>
-              </template>
-              创建考试
-            </n-button>
-          </n-space>
-        </template>
+    <n-card :bordered="false">
+      <template #header>
+        <n-space justify="space-between" align="center">
+          <span>成绩管理</span>
+          <n-button type="primary" @click="showCreateExam = true">
+            <template #icon>
+              <n-icon>
+                <AddOutline />
+              </n-icon>
+            </template>
+            创建考试
+          </n-button>
+        </n-space>
+      </template>
 
-        <!-- 考试列表 -->
-        <n-data-table
-          :columns="examColumns"
-          :data="exams"
-          :pagination="pagination"
-          :row-key="(row: any) => row.id"
-        />
-      </n-card>
-    </div>
+      <!-- 考试列表 -->
+      <n-data-table :columns="examColumns" :data="exams" :pagination="pagination" :row-key="(row: any) => row.id" />
+    </n-card>
+
 
     <!-- 创建考试模态框 -->
     <n-modal v-model:show="showCreateExam" preset="dialog" title="创建考试" style="max-width: 700px">
@@ -38,27 +35,15 @@
         <n-form-item label="考试类型">
           <n-select v-model:value="examForm.typeId" :options="examTypeOptions" />
         </n-form-item>
-        
+
         <n-divider>知识点配分</n-divider>
         <n-form-item label="知识点">
-          <n-dynamic-input
-            v-model:value="examForm.knowledgePointScores"
-            :on-create="onCreateKnowledgePoint"
-          >
+          <n-dynamic-input v-model:value="examForm.knowledgePointScores" :on-create="onCreateKnowledgePoint">
             <template #default="{ value }">
               <n-space :wrap="true" :size="12">
-                <n-select
-                  v-model:value="value.knowledgePointId"
-                  :options="knowledgePointOptions"
-                  placeholder="选择知识点"
-                  style="width: 250px"
-                />
-                <n-input-number
-                  v-model:value="value.pointTotal"
-                  :min="1"
-                  placeholder="配分"
-                  style="width: 120px"
-                />
+                <n-select v-model:value="value.knowledgePointId" :options="knowledgePointOptions" placeholder="选择知识点"
+                  style="width: 250px" />
+                <n-input-number v-model:value="value.pointTotal" :min="1" placeholder="配分" style="width: 120px" />
               </n-space>
             </template>
           </n-dynamic-input>
@@ -73,29 +58,21 @@
     </n-modal>
 
     <!-- 成绩录入模态框 -->
-    <n-modal v-model:show="showGradeInput" preset="dialog" :title="`录入成绩 - ${currentExam?.name}`" style="max-width: 900px">
+    <n-modal v-model:show="showGradeInput" preset="dialog" :title="`录入成绩 - ${currentExam?.name}`"
+      style="max-width: 900px">
       <n-space vertical>
         <n-alert type="info" :bordered="false">
           提示：使用 Tab 键切换学生，Space 勾选缺考，Enter 暂存
         </n-alert>
-        
-        <n-data-table
-          :columns="gradeColumns"
-          :data="gradeRecords"
-          :pagination="false"
-          :row-key="(row: any) => row.studentId"
-          size="small"
-        />
-        
+
+        <n-data-table :columns="gradeColumns" :data="gradeRecords" :pagination="false"
+          :row-key="(row: any) => row.studentId" size="small" />
+
         <n-space justify="end">
           <n-button @click="saveDraft" :disabled="gradeRecords.length === 0">
             暂存草稿
           </n-button>
-          <n-button
-            type="primary"
-            @click="submitGrades"
-            :disabled="!canSubmit"
-          >
+          <n-button type="primary" @click="submitGrades" :disabled="!canSubmit">
             最终提交
           </n-button>
         </n-space>
@@ -238,9 +215,9 @@ function onCreateKnowledgePoint() {
 
 async function createExam() {
   if (!examForm.value.name || examForm.value.knowledgePointScores.length === 0) return
-  
+
   const examType = examTypeOptions.value.find(t => t.value === examForm.value.typeId)
-  
+
   await api.createExam({
     name: examForm.value.name,
     date: new Date(examForm.value.date).toISOString().split('T')[0],
@@ -255,7 +232,7 @@ async function createExam() {
       }
     }),
   })
-  
+
   showCreateExam.value = false
   examForm.value = { name: '', date: 0, maxScore: 100, typeId: 0, knowledgePointScores: [] }
   loadExams()
@@ -267,7 +244,7 @@ async function loadExams() {
 
 async function openGradeInput(exam: Exam) {
   currentExam.value = exam
-  
+
   // 加载成绩记录（如果没有则创建新的）
   const records = await api.getGradeRecords(exam.id)
   if (records.length === 0) {
@@ -284,7 +261,7 @@ async function openGradeInput(exam: Exam) {
   } else {
     gradeRecords.value = records
   }
-  
+
   showGradeInput.value = true
 }
 
@@ -294,22 +271,22 @@ async function saveDraft() {
 
 async function submitGrades() {
   if (!canSubmit.value || !currentExam.value) return
-  
+
   gradeRecords.value.forEach(r => r.status = 'submitted')
   await api.submitGradeRecords(currentExam.value.id)
-  
+
   showGradeInput.value = false
 }
 
 onMounted(async () => {
   await studentStore.fetchStudents()
   await loadExams()
-  
+
   const examTypes = await api.getExamTypes()
   examTypeOptions.value = examTypes.map(t => ({ label: t.name, value: t.id }))
-  
+
   const knowledgePoints = await api.getKnowledgePoints()
-  
+
   // 扁平化知识点
   function flattenKPs(kps: KnowledgePoint[], prefix = ''): { label: string; value: number }[] {
     return kps.flatMap(kp => {
@@ -318,7 +295,7 @@ onMounted(async () => {
       return [{ label, value: kp.id }, ...children]
     })
   }
-  
+
   knowledgePointOptions.value = flattenKPs(knowledgePoints)
 })
 </script>

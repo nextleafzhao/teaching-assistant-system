@@ -1,50 +1,43 @@
 <template>
   <div class="plans-page">
-      <n-card :bordered="false">
-        <template #header>
-          <n-space justify="space-between" align="center">
-            <n-tabs v-model:value="activeTab" type="segment">
-              <n-tab-pane name="assignments" tab="计划指派" />
-              <n-tab-pane name="templates" tab="模板管理" />
-            </n-tabs>
-            <n-button type="primary" @click="showCreatePlan = true">
-              <template #icon>
-                <n-icon><AddOutline /></n-icon>
-              </template>
-              新增计划
-            </n-button>
-          </n-space>
-        </template>
+    <n-card :bordered="false">
+      <template #header>
+        <n-space justify="space-between" align="center">
+          <n-tabs v-model:value="activeTab" type="segment">
+            <n-tab-pane name="assignments" tab="计划指派" />
+            <n-tab-pane name="templates" tab="模板管理" />
+          </n-tabs>
+          <n-button type="primary" @click="showCreatePlan = true">
+            <template #icon>
+              <n-icon>
+                <AddOutline />
+              </n-icon>
+            </template>
+            新增计划
+          </n-button>
+        </n-space>
+      </template>
 
-        <!-- 计划指派列表 -->
-        <div v-if="activeTab === 'assignments'">
-          <n-data-table
-            :columns="assignmentColumns"
-            :data="assignments"
-            :row-key="(row: any) => row.id"
-          />
-        </div>
+      <!-- 计划指派列表 -->
+      <div v-if="activeTab === 'assignments'">
+        <n-data-table :columns="assignmentColumns" :data="assignments" :row-key="(row: any) => row.id" />
+      </div>
 
-        <!-- 模板管理 -->
-        <div v-else>
-          <n-grid :cols="2" :x-gap="16">
-            <n-grid-item v-for="plan in plans" :key="plan.id">
-              <n-card :title="plan.name" size="small">
-                <n-timeline size="small">
-                  <n-timeline-item
-                    v-for="step in plan.steps"
-                    :key="step.id"
-                    :type="step.completed ? 'success' : 'default'"
-                    :title="step.description"
-                    :content="step.estimatedDays ? `预计 ${step.estimatedDays} 天` : ''"
-                  />
-                </n-timeline>
-              </n-card>
-            </n-grid-item>
-          </n-grid>
-        </div>
-      </n-card>
-    </div>
+      <!-- 模板管理 -->
+      <div v-else>
+        <n-grid :cols="2" :x-gap="16">
+          <n-grid-item v-for="plan in plans" :key="plan.id">
+            <n-card :title="plan.name" size="small">
+              <n-timeline size="small">
+                <n-timeline-item v-for="step in plan.steps" :key="step.id"
+                  :type="step.completed ? 'success' : 'default'" :title="step.description"
+                  :content="step.estimatedDays ? `预计 ${step.estimatedDays} 天` : ''" />
+              </n-timeline>
+            </n-card>
+          </n-grid-item>
+        </n-grid>
+      </div>
+    </n-card>
 
     <!-- 创建计划模态框 -->
     <n-modal v-model:show="showCreatePlan" preset="dialog" title="新增教学计划" style="max-width: 700px">
@@ -53,19 +46,12 @@
           <n-input v-model:value="planForm.name" placeholder="请输入计划名称" />
         </n-form-item>
         <n-form-item label="计划步骤">
-          <n-dynamic-input
-            v-model:value="planForm.steps"
-            :on-create="() => ({ description: '', knowledgePointIds: [], estimatedDays: 0, completed: false })"
-          >
+          <n-dynamic-input v-model:value="planForm.steps"
+            :on-create="() => ({ description: '', knowledgePointIds: [], estimatedDays: 0, completed: false })">
             <template #default="{ value }">
               <n-card size="small">
                 <n-input v-model:value="value.description" placeholder="步骤描述" />
-                <n-input-number
-                  v-model:value="value.estimatedDays"
-                  :min="1"
-                  placeholder="预计天数"
-                  class="mt-8"
-                />
+                <n-input-number v-model:value="value.estimatedDays" :min="1" placeholder="预计天数" class="mt-8" />
               </n-card>
             </template>
           </n-dynamic-input>
@@ -141,7 +127,7 @@ const assignmentColumns = [
 
 async function createPlan() {
   if (!planForm.value.name || planForm.value.steps.length === 0) return
-  
+
   plans.value.push({
     id: Date.now(),
     name: planForm.value.name,
@@ -151,7 +137,7 @@ async function createPlan() {
       knowledgePointIds: [],
     })),
   })
-  
+
   showCreatePlan.value = false
   planForm.value = { name: '', steps: [] }
 }
@@ -159,7 +145,7 @@ async function createPlan() {
 onMounted(async () => {
   plans.value = await api.getPlans()
   assignments.value = await api.getAssignments()
-  
+
   // 添加计划名称
   assignments.value.forEach(a => {
     const plan = plans.value.find(p => p.id === a.planId)

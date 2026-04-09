@@ -1,88 +1,70 @@
 <template>
   <div class="schedule-page">
-      <n-card :bordered="false">
-        <template #header>
-          <n-space justify="space-between" align="center">
-            <n-space align="center">
-              <n-button-group>
-                <n-button @click="changeWeek(-1)">上一周</n-button>
-                <n-button @click="changeWeek(1)">下一周</n-button>
-              </n-button-group>
-              <span class="week-label">{{ weekLabel }}</span>
-              <n-button @click="goToday">今天</n-button>
-            </n-space>
-            <n-space>
-              <n-select
-                v-model:value="selectedTemplate"
-                :options="templateOptions"
-                placeholder="应用模板"
-                style="width: 150px"
-                @update:value="applyTemplate"
-              />
-              <n-button type="primary" @click="showAddCourse = true">
-                <template #icon>
-                  <n-icon><AddOutline /></n-icon>
-                </template>
-                创建课程
-              </n-button>
-            </n-space>
+    <n-card :bordered="false">
+      <template #header>
+        <n-space justify="space-between" align="center">
+          <n-space align="center">
+            <n-button-group>
+              <n-button @click="changeWeek(-1)">上一周</n-button>
+              <n-button @click="changeWeek(1)">下一周</n-button>
+            </n-button-group>
+            <span class="week-label">{{ weekLabel }}</span>
+            <n-button @click="goToday">今天</n-button>
           </n-space>
-        </template>
+          <n-space>
+            <n-select v-model:value="selectedTemplate" :options="templateOptions" placeholder="应用模板"
+              style="width: 150px" @update:value="applyTemplate" />
+            <n-button type="primary" @click="showAddCourse = true">
+              <template #icon>
+                <n-icon>
+                  <AddOutline />
+                </n-icon>
+              </template>
+              创建课程
+            </n-button>
+          </n-space>
+        </n-space>
+      </template>
 
-        <!-- 日历网格 -->
-        <div class="calendar-grid">
-          <!-- 表头：星期 -->
-          <div class="calendar-header">
-            <div class="time-column-header"></div>
-            <div v-for="(day, index) in weekDays" :key="index" class="day-header">
-              <div>{{ day.name }}</div>
-              <div class="day-date">{{ day.date }}</div>
-            </div>
+      <!-- 日历网格 -->
+      <div class="calendar-grid">
+        <!-- 表头：星期 -->
+        <div class="calendar-header">
+          <div class="time-column-header"></div>
+          <div v-for="(day, index) in weekDays" :key="index" class="day-header">
+            <div>{{ day.name }}</div>
+            <div class="day-date">{{ day.date }}</div>
           </div>
+        </div>
 
-          <!-- 时间网格 -->
-          <div class="calendar-body">
-            <div v-for="hour in hours" :key="hour" class="time-row">
-              <div class="time-label">{{ String(hour).padStart(2, '0') }}:00</div>
-              <div
-                v-for="(day, dayIndex) in weekDays"
-                :key="dayIndex"
-                class="time-cell"
-                @click="onCellClick(day.date, hour)"
-              >
-                <!-- 课程卡片 -->
-                <div
-                  v-for="course in getCoursesForCell(day.date, hour)"
-                  :key="course.id"
-                  class="course-card"
-                  :class="course.status"
-                  @click.stop="editCourse(course)"
-                >
-                  <div class="course-header">
-                    <span class="course-students">{{ course.studentNames.join(', ') }}</span>
-                    <div class="course-status-dot" :class="course.status"></div>
-                  </div>
-                  <div class="course-content">{{ course.content }}</div>
-                  <div class="course-time">{{ course.startTime }} - {{ course.endTime }}</div>
+        <!-- 时间网格 -->
+        <div class="calendar-body">
+          <div v-for="hour in hours" :key="hour" class="time-row">
+            <div class="time-label">{{ String(hour).padStart(2, '0') }}:00</div>
+            <div v-for="(day, dayIndex) in weekDays" :key="dayIndex" class="time-cell"
+              @click="onCellClick(day.date, hour)">
+              <!-- 课程卡片 -->
+              <div v-for="course in getCoursesForCell(day.date, hour)" :key="course.id" class="course-card"
+                :class="course.status" @click.stop="editCourse(course)">
+                <div class="course-header">
+                  <span class="course-students">{{ course.studentNames.join(', ') }}</span>
+                  <div class="course-status-dot" :class="course.status"></div>
                 </div>
+                <div class="course-content">{{ course.content }}</div>
+                <div class="course-time">{{ course.startTime }} - {{ course.endTime }}</div>
               </div>
             </div>
           </div>
         </div>
-      </n-card>
-    </div>
+      </div>
+    </n-card>
 
     <!-- 创建/编辑课程模态框 -->
     <n-modal v-model:show="showAddCourse" preset="dialog" :title="editingCourse ? '编辑课程' : '创建课程'">
       <n-form :model="courseForm" label-placement="left" label-width="80">
         <n-form-item label="学生">
-          <n-select
-            v-model:value="courseForm.studentIds"
-            :options="studentOptions"
-            multiple
-            filterable
-            placeholder="选择学生"
-          />
+          <n-select v-model:value="courseForm.studentIds" :options="studentOptions" multiple filterable
+            placeholder="选择学生" />
         </n-form-item>
         <n-form-item label="日期">
           <n-date-picker v-model:value="courseForm.date" type="date" />
@@ -97,18 +79,10 @@
           <n-input v-model:value="courseForm.content" type="textarea" placeholder="课程内容" :rows="3" />
         </n-form-item>
         <n-form-item label="教学计划">
-          <n-select
-            v-model:value="courseForm.planId"
-            :options="planOptions"
-            placeholder="选择教学计划 (可选)"
-            clearable
-          />
+          <n-select v-model:value="courseForm.planId" :options="planOptions" placeholder="选择教学计划 (可选)" clearable />
         </n-form-item>
         <n-form-item label="状态">
-          <n-select
-            v-model:value="courseForm.status"
-            :options="statusOptions"
-          />
+          <n-select v-model:value="courseForm.status" :options="statusOptions" />
         </n-form-item>
       </n-form>
       <template #action>
@@ -169,7 +143,7 @@ const weekDays = computed(() => {
   const days = []
   const start = new Date(currentWeekStart.value)
   const dayNames = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-  
+
   for (let i = 0; i < 7; i++) {
     const date = new Date(start)
     date.setDate(start.getDate() + i)
@@ -179,7 +153,7 @@ const weekDays = computed(() => {
       fullDate: date.toISOString().split('T')[0],
     })
   }
-  
+
   return days
 })
 
@@ -198,7 +172,7 @@ function getCoursesForCell(date: string, hour: number) {
     d.setDate(d.getDate() + i)
     return d.toISOString().split('T')[0] === date
   })?.fullDate
-  
+
   return courseStore.courses.filter(c => {
     if (!dateStr) return false
     const [startHour] = c.startTime.split(':').map(Number)
@@ -233,9 +207,9 @@ function onCellClick(date: string, hour: number) {
     d.setDate(d.getDate() + i)
     return d.toISOString().split('T')[0] === date
   })
-  
+
   if (!day) return
-  
+
   courseForm.value.date = new Date(day.fullDate).getTime()
   courseForm.value.startTime = `${String(hour).padStart(2, '0')}:00`
   courseForm.value.endTime = `${String(hour + 1).padStart(2, '0')}:00`
@@ -261,13 +235,13 @@ async function saveCourse() {
   if (courseForm.value.studentIds.length === 0 || !courseForm.value.content) {
     return
   }
-  
+
   const dateStr = new Date(courseForm.value.date).toISOString().split('T')[0]
   const studentNames = courseForm.value.studentIds.map(id => {
     const student = studentStore.students.find(s => s.id === id)
     return student?.name || ''
   }).filter(Boolean)
-  
+
   if (editingCourse.value) {
     await courseStore.updateCourse(editingCourse.value.id, {
       studentIds: courseForm.value.studentIds,
@@ -291,7 +265,7 @@ async function saveCourse() {
       status: courseForm.value.status,
     })
   }
-  
+
   showAddCourse.value = false
   editingCourse.value = null
   courseForm.value = {
@@ -313,12 +287,12 @@ function applyTemplate(templateId: number) {
 onMounted(async () => {
   goToday()
   await studentStore.fetchStudents()
-  
+
   studentOptions.value = studentStore.students.map(s => ({
     label: s.name,
     value: s.id,
   }))
-  
+
   const plans = await api.getPlans()
   planOptions.value = plans.map(p => ({
     label: p.name,

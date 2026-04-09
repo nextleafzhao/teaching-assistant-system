@@ -1,72 +1,68 @@
 <template>
   <div class="analytics-page">
-      <n-card :bordered="false">
-        <template #header>
-          <n-space justify="space-between" align="center">
-            <n-tabs v-model:value="activeTab" type="segment">
-              <n-tab-pane name="personal" tab="个人学情" />
-              <n-tab-pane name="overall" tab="整体学情" />
-            </n-tabs>
-            <n-button @click="exportData">
-              <template #icon>
-                <n-icon><DownloadOutline /></n-icon>
-              </template>
-              导出 AI 分析数据集
-            </n-button>
-          </n-space>
-        </template>
+    <n-card :bordered="false">
+      <template #header>
+        <n-space justify="space-between" align="center">
+          <n-tabs v-model:value="activeTab" type="segment">
+            <n-tab-pane name="personal" tab="个人学情" />
+            <n-tab-pane name="overall" tab="整体学情" />
+          </n-tabs>
+          <n-button @click="exportData">
+            <template #icon>
+              <n-icon>
+                <DownloadOutline />
+              </n-icon>
+            </template>
+            导出 AI 分析数据集
+          </n-button>
+        </n-space>
+      </template>
 
-        <!-- 个人学情 -->
-        <div v-if="activeTab === 'personal'">
-          <n-space :wrap="true" :size="12" class="mb-16">
-            <n-select
-              v-model:value="selectedStudentId"
-              :options="studentOptions"
-              placeholder="选择学生"
-              style="width: 200px"
-              @update:value="loadPersonalAnalytics"
-            />
-          </n-space>
+      <!-- 个人学情 -->
+      <div v-if="activeTab === 'personal'">
+        <n-space :wrap="true" :size="12" class="mb-16">
+          <n-select v-model:value="selectedStudentId" :options="studentOptions" placeholder="选择学生" style="width: 200px"
+            @update:value="loadPersonalAnalytics" />
+        </n-space>
 
-          <n-grid :cols="2" :x-gap="16" :y-gap="16">
-            <!-- 知识点掌握度雷达图 -->
-            <n-grid-item>
-              <n-card title="知识点掌握度" :bordered="false">
-                <v-chart v-if="radarChartOption" class="chart" :option="radarChartOption" autoresize />
-                <n-empty v-else description="请选择学生" />
-              </n-card>
-            </n-grid-item>
+        <n-grid :cols="2" :x-gap="16" :y-gap="16">
+          <!-- 知识点掌握度雷达图 -->
+          <n-grid-item>
+            <n-card title="知识点掌握度" :bordered="false">
+              <v-chart v-if="radarChartOption" class="chart" :option="radarChartOption" autoresize />
+              <n-empty v-else description="请选择学生" />
+            </n-card>
+          </n-grid-item>
 
-            <!-- 成绩趋势图 -->
-            <n-grid-item>
-              <n-card title="成绩趋势" :bordered="false">
-                <v-chart v-if="lineChartOption" class="chart" :option="lineChartOption" autoresize />
-                <n-empty v-else description="暂无成绩数据" />
-              </n-card>
-            </n-grid-item>
-          </n-grid>
-        </div>
+          <!-- 成绩趋势图 -->
+          <n-grid-item>
+            <n-card title="成绩趋势" :bordered="false">
+              <v-chart v-if="lineChartOption" class="chart" :option="lineChartOption" autoresize />
+              <n-empty v-else description="暂无成绩数据" />
+            </n-card>
+          </n-grid-item>
+        </n-grid>
+      </div>
 
-        <!-- 整体学情 -->
-        <div v-else>
-          <n-grid :cols="2" :x-gap="16" :y-gap="16">
-            <!-- 分数段分布 -->
-            <n-grid-item>
-              <n-card title="分数段分布" :bordered="false">
-                <v-chart class="chart" :option="distributionChartOption" autoresize />
-              </n-card>
-            </n-grid-item>
+      <!-- 整体学情 -->
+      <div v-else>
+        <n-grid :cols="2" :x-gap="16" :y-gap="16">
+          <!-- 分数段分布 -->
+          <n-grid-item>
+            <n-card title="分数段分布" :bordered="false">
+              <v-chart class="chart" :option="distributionChartOption" autoresize />
+            </n-card>
+          </n-grid-item>
 
-            <!-- 知识点掌握率热力图 -->
-            <n-grid-item>
-              <n-card title="班级知识点掌握率" :bordered="false">
-                <v-chart class="chart" :option="heatmapOption" autoresize />
-              </n-card>
-            </n-grid-item>
-          </n-grid>
-        </div>
-      </n-card>
-    </div>
+          <!-- 知识点掌握率热力图 -->
+          <n-grid-item>
+            <n-card title="班级知识点掌握率" :bordered="false">
+              <v-chart class="chart" :option="heatmapOption" autoresize />
+            </n-card>
+          </n-grid-item>
+        </n-grid>
+      </div>
+    </n-card>
   </div>
 </template>
 
@@ -223,12 +219,12 @@ function exportData() {
 
 onMounted(async () => {
   await studentStore.fetchStudents()
-  
+
   studentOptions.value = studentStore.students.map(s => ({
     label: s.name,
     value: s.id,
   }))
-  
+
   loadOverallAnalytics()
 })
 </script>

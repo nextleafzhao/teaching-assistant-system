@@ -1,66 +1,61 @@
 <template>
   <div class="resources-page">
-      <n-card :bordered="false">
-        <template #header>
-          <n-space justify="space-between" align="center">
-            <n-tabs v-model:value="activeTab" type="segment">
-              <n-tab-pane name="files" tab="文件列表" />
-              <n-tab-pane name="dangling" tab="悬空记录" />
-            </n-tabs>
-            <n-button @click="addDirectory">
-              <template #icon>
-                <n-icon><FolderOpenOutline /></n-icon>
-              </template>
-              添加目录
-            </n-button>
-          </n-space>
-        </template>
+    <n-card :bordered="false">
+      <template #header>
+        <n-space justify="space-between" align="center">
+          <n-tabs v-model:value="activeTab" type="segment">
+            <n-tab-pane name="files" tab="文件列表" />
+            <n-tab-pane name="dangling" tab="悬空记录" />
+          </n-tabs>
+          <n-button @click="addDirectory">
+            <template #icon>
+              <n-icon>
+                <FolderOpenOutline />
+              </n-icon>
+            </template>
+            添加目录
+          </n-button>
+        </n-space>
+      </template>
 
-        <!-- 文件列表 -->
-        <div v-if="activeTab === 'files'" class="resources-layout">
-          <!-- 左侧目录树 -->
-          <div class="directory-tree">
-            <n-tree
-              :data="directoryTree"
-              block-line
-              @update:selected-key="onSelectDirectory"
-            />
-          </div>
-
-          <!-- 中央文件列表 -->
-          <div class="file-list">
-            <n-data-table
-              :columns="fileColumns"
-              :data="currentFiles"
-              :pagination="pagination"
-              :row-key="(row: any) => row.id"
-            />
-          </div>
+      <!-- 文件列表 -->
+      <div v-if="activeTab === 'files'" class="resources-layout">
+        <!-- 左侧目录树 -->
+        <div class="directory-tree">
+          <n-tree :data="directoryTree" block-line @update:selected-key="onSelectDirectory" />
         </div>
 
-        <!-- 悬空记录视图 -->
-        <div v-else>
-          <n-alert type="warning" :bordered="false" class="mb-16">
-            悬空记录是指文件路径已失效的使用记录，您可以拖拽悬空记录到有效文件上进行合并修复。
-          </n-alert>
-          
-          <n-list>
-            <n-list-item v-for="material in danglingMaterials" :key="material.id">
-              <n-space align="center">
-                <n-icon :size="20" color="#D03050"><WarningOutline /></n-icon>
-                <div>
-                  <div class="dangling-file">{{ material.fileName }}</div>
-                  <div class="dangling-path">{{ material.filePath }}</div>
-                </div>
-                <n-tag size="small" type="warning">链接失效</n-tag>
-              </n-space>
-            </n-list-item>
-          </n-list>
-          
-          <n-empty v-if="danglingMaterials.length === 0" description="暂无悬空记录" />
+        <!-- 中央文件列表 -->
+        <div class="file-list">
+          <n-data-table :columns="fileColumns" :data="currentFiles" :pagination="pagination"
+            :row-key="(row: any) => row.id" />
         </div>
-      </n-card>
-    </div>
+      </div>
+
+      <!-- 悬空记录视图 -->
+      <div v-else>
+        <n-alert type="warning" :bordered="false" class="mb-16">
+          悬空记录是指文件路径已失效的使用记录，您可以拖拽悬空记录到有效文件上进行合并修复。
+        </n-alert>
+
+        <n-list>
+          <n-list-item v-for="material in danglingMaterials" :key="material.id">
+            <n-space align="center">
+              <n-icon :size="20" color="#D03050">
+                <WarningOutline />
+              </n-icon>
+              <div>
+                <div class="dangling-file">{{ material.fileName }}</div>
+                <div class="dangling-path">{{ material.filePath }}</div>
+              </div>
+              <n-tag size="small" type="warning">链接失效</n-tag>
+            </n-space>
+          </n-list-item>
+        </n-list>
+
+        <n-empty v-if="danglingMaterials.length === 0" description="暂无悬空记录" />
+      </div>
+    </n-card>
 
     <!-- 记录使用抽屉 -->
     <n-drawer v-model:show="showUsageDrawer" :width="500" placement="right">
@@ -85,13 +80,8 @@
             <n-select v-model:value="usageForm.typeId" :options="materialTypeOptions" />
           </n-form-item>
           <n-form-item label="关联学生">
-            <n-select
-              v-model:value="usageForm.studentIds"
-              :options="studentOptions"
-              multiple
-              filterable
-              placeholder="选择学生"
-            />
+            <n-select v-model:value="usageForm.studentIds" :options="studentOptions" multiple filterable
+              placeholder="选择学生" />
           </n-form-item>
         </n-form>
         <template #footer>
@@ -209,7 +199,7 @@ function onSelectDirectory(_keys: string[]) {
 
 function openUsageDrawer(material: MaterialUsageLog) {
   selectedMaterial.value = material
-  
+
   // 智能默认：预填上一次的值
   const lastUsage = materials.value[0]
   if (lastUsage) {
@@ -222,7 +212,7 @@ function openUsageDrawer(material: MaterialUsageLog) {
       studentIds: [],
     }
   }
-  
+
   showUsageDrawer.value = true
 }
 
@@ -233,7 +223,7 @@ function addDirectory() {
 
 async function saveUsage() {
   if (usageForm.value.studentIds.length === 0) return
-  
+
   // Mock: 保存使用记录
   console.log('Save usage:', usageForm.value)
   showUsageDrawer.value = false
@@ -243,16 +233,16 @@ onMounted(async () => {
   await studentStore.fetchStudents()
   materials.value = await api.getMaterials()
   currentFiles.value = materials.value
-  
+
   const cohorts = await api.getCohorts()
   cohortOptions.value = cohorts.map(c => ({ label: c.name, value: c.id }))
-  
+
   const grades = await api.getGrades()
   gradeOptions.value = grades.map(g => ({ label: g.name, value: g.id }))
-  
+
   const materialTypes = await api.getMaterialTypes()
   materialTypeOptions.value = materialTypes.map(t => ({ label: t.name, value: t.id }))
-  
+
   studentOptions.value = studentStore.students.map(s => ({
     label: s.name,
     value: s.id,

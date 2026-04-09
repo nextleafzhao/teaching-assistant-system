@@ -116,7 +116,10 @@ const menuOptions: MenuOption[] = [
 
 // 菜单点击事件处理
 function handleMenuUpdate(key: string) {
-  router.push({ name: key })
+  console.log('[Menu] Navigate to:', key)
+  router.push({ name: key }).catch(err => {
+    console.error('[Menu] Navigation failed:', err)
+  })
 }
 </script>
 

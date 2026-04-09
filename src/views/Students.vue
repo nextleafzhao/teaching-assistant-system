@@ -47,7 +47,6 @@
           :row-key="(row: Student) => row.id"
         />
       </n-card>
-    </div>
 
     <!-- 新增学生模态框 -->
     <n-modal v-model:show="showAddStudent" preset="dialog" title="新增学生">
