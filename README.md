@@ -81,11 +81,21 @@ npm install
 ### 开发模式
 
 ```bash
-# 仅前端热重载
+# 仅前端热重载 (端口: http://localhost:1420)
 npm run dev
 
-# Tauri 开发模式 (前端 + Rust)
+# Tauri 开发模式 (前端 + Rust 桌面窗口)
 npm run tauri dev
+```
+
+### 停止服务
+
+```bash
+# 停止 Node.js 开发服务器
+taskkill /F /IM node.exe
+
+# 或停止特定进程
+taskkill /F /T /PID <PID>
 ```
 
 ### 构建
