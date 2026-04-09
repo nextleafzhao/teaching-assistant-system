@@ -1,12 +1,7 @@
-# teaching-assistant-system
+# Tauri + Vue + TypeScript
 
-### 技术栈
+This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-| 层级 | 技术选型 | 
-| :--- | :--- |
-| **桌面外壳** | **Tauri** |
-| **前端框架** | **Vue 3 + Vite + TypeScript** | 
-| **UI 组件库** | **Naive UI** |
-| **后端服务** | **Rust (Tauri 内置)** | 
-| **数据库** | **SQLite + SQLx (Rust) ** | 
-| **打包分发** | **Tauri 构建 `.msi` / `.exe` 安装包** | 
+## Recommended IDE Setup
+
+- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
